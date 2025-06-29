@@ -1,5 +1,3 @@
-
-``
 # Production-Ready FastAPI Deployment
 
 ## Overview
