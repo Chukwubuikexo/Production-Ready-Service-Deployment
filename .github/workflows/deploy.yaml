@@ -1,0 +1,49 @@
+name: Deploy FastAPI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+      
+    - name: Run tests
+      run: pytest tests/
+      
+    - name: Build Docker image
+      run: docker build -t fastapi-app:${{ github.sha }} .
+      
+    - name: Scan for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: fastapi-app:${{ github.sha }}
+        format: 'table'
+        exit-code: '1'
+        severity: 'HIGH,CRITICAL'
+        
+  deploy-production:
+    needs: build-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - name: Deploy to Kubernetes
+      uses: kubectl-action@v1
+      with:
+        command: apply -f k8s/
+        kubectl-version: "latest"
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}

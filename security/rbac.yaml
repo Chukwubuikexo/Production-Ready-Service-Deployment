@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fastapi-sa
+  namespace: production
+  labels:
+    app: fastapi-app
+  annotations:
+    description: "Service account for FastAPI application"
+automountServiceAccountToken: false  # Security: disable auto-mounting unless needed
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: fastapi-role
+  namespace: production
+  labels:
+    app: fastapi-app
+rules:
+# Read-only access to own pod info
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get"]
+  resourceNames: []  
+# Service discovery (if needed)
+- apiGroups: [""]
+  resources: ["services", "endpoints"]
+  verbs: ["get", "list"]
+# ConfigMaps and Secrets (if app needs to read config)
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+  resourceNames: ["fastapi-config"]  # Limit to specific ConfigMap
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+  resourceNames: ["fastapi-secrets"]  # Limit to specific Secret
+# Remove deployment access unless actually needed
+# - apiGroups: ["apps"]
+#   resources: ["deployments"]
+#   verbs: ["get", "list"]
+
+# RoleBinding 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: fastapi-role-binding
+  namespace: production
+  labels:
+    app: fastapi-app
+subjects:
+- kind: ServiceAccount
+  name: fastapi-sa
+  namespace: production
+roleRef:
+  kind: Role
+  name: fastapi-role
+  apiGroup: rbac.authorization.k8s.io

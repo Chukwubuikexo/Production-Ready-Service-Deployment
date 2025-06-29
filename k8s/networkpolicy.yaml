@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: fastapi-enhanced-policy
+  annotations:
+    security.kubernetes.io/psp: restricted
+spec:
+  podSelector:
+    matchLabels:
+      app: fastapi-app
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    - podSelector:
+        matchLabels:
+          role: prometheus
+    ports:
+    - protocol: TCP
+      port: 8000
+    # rule for port range
+    - protocol: TCP
+      port: 8001
+    - protocol: TCP
+      port: 8002
+    - protocol: TCP
+      port: 8003
+    - protocol: TCP
+      port: 8004
+    - protocol: TCP
+      port: 8005
+  egress:
+  # Database access rule
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: database
+    - podSelector:
+        matchLabels:
+          app: postgres
+    ports:
+    - protocol: TCP
+      port: 5432
+  # External API access rule
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+        except:
+        - 10.0.0.0/24 # Exclude test subnets
+    ports:
+    - protocol: TCP
+      port: 443
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
