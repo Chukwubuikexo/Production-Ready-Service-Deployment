@@ -1,4 +1,4 @@
-# General development artifacts
+
 *.pyc
 *.pyo
 *.pyd
@@ -9,3 +9,7 @@ __pycache__/
 .coverage
 htmlcov/
 .mypy_cache/
+# Test artifacts
+tests/__pycache__/
+*.py[cod]
+tests/*.pyc
