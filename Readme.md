@@ -30,6 +30,9 @@ source venv/bin/activate  # Linux/Mac
 
 # Install dependencies
 pip install -r requirements.txt
+
+#fastapi==0.109.2
+#uvicorn==0.27.1
 ```
 
 ### 2. Docker Build
