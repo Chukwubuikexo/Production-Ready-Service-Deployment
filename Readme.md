@@ -135,6 +135,12 @@ kubectl logs <pod-name> --previous
 1. Stop host Grafana process and port-forward again
 
 
+### Issue 5: No permission for .github.workflows in CI/CD
+
+**Solution**
+1. Grant workflow permission to git token
+
+
 
 ### Added Security Measures
 1. Set port range in network policies
