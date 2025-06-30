@@ -16,3 +16,4 @@ tests/*.pyc
 
 
 requirements.txt
+tests/
