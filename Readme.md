@@ -117,23 +117,30 @@ kubectl logs <pod-name> --previous
 ```
 
 ### Issue 3 : Autoscaling Failure during Load Test
-#   Solution: 1. Clean up existing test pods
-#             2. Test Connectivity with full DNS name
+
+
+**Solution**:
+
+1. Clean up existing test pods
+2. Test Connectivity with full DNS name
 
 
 
 ### Issue 4 : Grafana port already in use on host machine not in k8s
-#   Solution: 1. Stop host Grafana process and port-forward again
+
+**Solution**
+1. Stop host Grafana process and port-forward again
 
 
 
-## Added Security Measures
-
-### Network Policies -  1. Set port range
-#                       2. Specific permission for service account
-#                       3. Used SealedSecrets in secret.yaml 
-#                       4. security updates in dockerfile builder stage
-#                       5. filesystem read-only where possible 
+### Added Security Measures
+1. Set port range in network policies
+2. Specific permission for service account
+3. Used SealedSecrets in secret.yaml 
+4. security updates in dockerfile builder stage
+5. filesystem read-only where possible 
+6. Must run as NonRootUser setting in pod-security.yaml 
+7. Vulnerabilities scan in workflows/deploy.yaml
 
 
 ## Monitoring & Maintenance
